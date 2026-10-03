@@ -38,6 +38,15 @@ git clone https://github.com/kasum00/stt.git
 Set-Location stt
 ```
 
+On Windows, the fastest setup is:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\scripts\setup.ps1
+```
+
+The script creates the Python environment, installs the backend and frontend dependencies, and creates the local `.env` files from the safe templates. It does not create PostgreSQL databases or overwrite existing environment files.
+
 ## 2. Configure PostgreSQL
 
 Create an empty database named `herstyleai`, then copy the backend environment template:
@@ -62,11 +71,21 @@ Never commit `.env` or real credentials.
 
 ## 3. Install and run the backend
 
+After PostgreSQL is configured, run this in a terminal from the repository root:
+
+```powershell
+.\scripts\start-backend.ps1
+```
+
+This applies the Alembic migrations and starts the API. Keep this terminal open.
+
+The manual commands below are equivalent if you prefer to run each step yourself.
+
 From the repository root:
 
 ```powershell
 Set-Location .\ai
-py -3.10 -m venv .venv
+py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
 python -m pip install --upgrade pip
@@ -87,6 +106,16 @@ API docs: <http://127.0.0.1:8000/docs>
 The first startup may download Hugging Face/rembg assets and load the compatibility model. Keep the backend terminal open.
 
 ## 4. Install and run the web frontend
+
+Open a second terminal from the repository root and run:
+
+```powershell
+.\scripts\start-web.ps1
+```
+
+The frontend helper creates `.env.local` when needed, installs npm packages, and starts Next.js.
+
+The manual commands below are equivalent:
 
 Open a second terminal from the repository root:
 
@@ -110,6 +139,8 @@ The browser communicates with FastAPI only. It never connects directly to Postgr
 5. View saved outfits and the weekly planner.
 
 The first outfit recommendation can take longer while image features are extracted. Subsequent recommendations are faster while the backend process remains running.
+
+The repository includes the runtime checkpoints required by the local AI pipeline. Hugging Face/rembg assets are downloaded on first use, so the first recognition request needs internet access and can take longer than later requests.
 
 ## Verification
 
