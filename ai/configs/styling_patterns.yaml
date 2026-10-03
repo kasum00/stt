@@ -1,0 +1,343 @@
+version: "1.0"
+
+# =========================================================
+# HERSTYLEAI PATTERN STYLING KNOWLEDGE
+#
+# IMPORTANT:
+# - Does NOT replace taxonomy.yaml / pattern labels.
+# - "base_patterns" must come from taxonomy.yaml.
+# - These profiles are used only by styling/recommendation.
+# =========================================================
+
+
+# =========================================================
+# GENERAL RULES
+# =========================================================
+
+general_rules:
+
+  # Safe default for office outfits:
+  # normally use only one visually patterned garment.
+  max_patterned_items_default: 1
+
+  prefer_solid_companion: true
+
+  allow_neutral_companion: true
+
+  prefer_repeat_pattern_color: true
+
+
+# =========================================================
+# PATTERN PROFILES
+# =========================================================
+
+profiles:
+
+  # -------------------------------------------------------
+  # SOLID
+  # -------------------------------------------------------
+
+  solid:
+
+    base_patterns:
+      - solid
+
+    scale: null
+
+    orientation: null
+
+    requires_solid_companion: false
+
+    prefer_repeat_motif_color: false
+
+    avoid_second_pattern: false
+
+
+  # -------------------------------------------------------
+  # CHECK
+  # -------------------------------------------------------
+
+  micro_check:
+
+    base_patterns:
+      - checked
+
+    scale: small
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  subtle_check:
+
+    base_patterns:
+      - checked
+
+    scale: small
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  large_check:
+
+    base_patterns:
+      - checked
+      - plaid
+
+    scale: large
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  # -------------------------------------------------------
+  # STRIPE
+  # -------------------------------------------------------
+
+  vertical_stripe:
+
+    base_patterns:
+      - striped
+
+    scale:
+      - small
+      - medium
+
+    orientation: vertical
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  horizontal_stripe:
+
+    base_patterns:
+      - striped
+
+    scale:
+      - small
+      - medium
+
+    orientation: horizontal
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  # -------------------------------------------------------
+  # FLORAL
+  # -------------------------------------------------------
+
+  small_floral:
+
+    base_patterns:
+      - floral
+
+    scale: small
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  large_floral:
+
+    base_patterns:
+      - floral
+
+    scale: large
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+    primary_visual_accent: true
+
+
+  tonal_floral:
+
+    base_patterns:
+      - floral
+
+    scale: null
+
+    orientation: null
+
+    tone_relation: tonal
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  # -------------------------------------------------------
+  # MULTICOLOR PRINT
+  #
+  # Can belong to different taxonomy pattern families.
+  # -------------------------------------------------------
+
+  multicolor_print:
+
+    base_patterns:
+      - floral
+      - polka_dot
+      - geometric
+      - abstract
+      - graphic
+      - other
+
+    scale: null
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+    restrict_new_colors: true
+
+    multicolor_threshold: 3
+
+
+  # -------------------------------------------------------
+  # DOT / GEOMETRIC / ABSTRACT
+  # -------------------------------------------------------
+
+  small_dot:
+
+    base_patterns:
+      - polka_dot
+
+    scale: small
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  geometric_print:
+
+    base_patterns:
+      - geometric
+
+    scale: null
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+  abstract_print:
+
+    base_patterns:
+      - abstract
+
+    scale: null
+
+    orientation: null
+
+    requires_solid_companion: true
+
+    prefer_repeat_motif_color: true
+
+    avoid_second_pattern: true
+
+
+# =========================================================
+# OUTFIT POSITION RULES
+# =========================================================
+
+outfit_rules:
+
+  pattern_top_solid_bottom:
+
+    patterned_slot:
+      - top
+
+    solid_slot:
+      - bottom
+
+    enabled: true
+
+
+  solid_top_pattern_bottom:
+
+    patterned_slot:
+      - bottom
+
+    solid_slot:
+      - top
+
+    enabled: true
+
+
+  pattern_with_blazer:
+
+    patterned_slot:
+      - top
+      - dress
+
+    required_solid_slot:
+      - outerwear
+
+    preferred_outerwear_subcategories:
+      - blazer
+
+    enabled: true
+
+
+  printed_dress_outerwear:
+
+    patterned_slot:
+      - dress
+
+    required_solid_slot:
+      - outerwear
+
+    prefer_repeat_motif_color: true
+
+    allow_neutral_outerwear: true
+
+    enabled: true

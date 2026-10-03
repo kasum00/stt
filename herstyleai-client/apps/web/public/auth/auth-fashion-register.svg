@@ -1,0 +1,20 @@
+<svg width="640" height="760" viewBox="0 0 640 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="760" rx="38" fill="#FFF5F1"/>
+  <circle cx="522" cy="170" r="94" fill="#FFE2D4"/>
+  <circle cx="108" cy="630" r="100" fill="#E4ECFF"/>
+  <path d="M89 700C113 575 183 501 317 491C457 482 528 562 570 700H89Z" fill="#FFFDFB"/>
+  <ellipse cx="320" cy="223" rx="65" ry="78" fill="#D99A78"/>
+  <path d="M253 217C254 131 383 126 398 213C373 188 340 181 299 204C286 217 270 228 253 217Z" fill="#4B3034"/>
+  <path d="M242 300L320 346L398 300L491 681H149L242 300Z" fill="#F38D9B"/>
+  <path d="M242 300L320 346L398 300L374 414H266L242 300Z" fill="#FFF8F4"/>
+  <path d="M241 371C212 441 204 546 217 681" stroke="#D86E82" stroke-width="3" opacity=".55"/>
+  <path d="M399 371C428 441 436 546 423 681" stroke="#D86E82" stroke-width="3" opacity=".55"/>
+  <path d="M205 680L166 728H274L290 680H205Z" fill="#3B4562"/>
+  <path d="M435 680L474 728H366L350 680H435Z" fill="#3B4562"/>
+  <path d="M194 382L121 527" stroke="#D99A78" stroke-width="22" stroke-linecap="round"/>
+  <path d="M446 382L519 527" stroke="#D99A78" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="121" cy="531" r="17" fill="#F38D9B"/>
+  <circle cx="519" cy="531" r="17" fill="#F38D9B"/>
+  <text x="54" y="86" fill="#D86E82" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">A NEW CHAPTER</text>
+  <text x="54" y="712" fill="#533746" font-family="Georgia, serif" font-size="27" font-weight="700">Dress your confidence.</text>
+</svg>

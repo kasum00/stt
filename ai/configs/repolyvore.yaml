@@ -1,0 +1,39 @@
+dataset:
+  image_root: "E:/Re-PolyVore (1)/Re-PolyVore"
+  metadata_root: "data/raw/repolyvore/metadata"
+
+splits:
+  train: train_no_dup.json
+  val: valid_no_dup.json
+  test: test_no_dup.json
+
+category_mapping:
+  top: top
+  pants: bottom
+  skirt: bottom
+  dress: dress
+  outwear: outerwear
+  shoes: shoes
+
+  jumpsuit: jumpsuit
+
+  bag: accessory
+  bracelet: accessory
+  brooch: accessory
+  earrings: accessory
+  eyewear: accessory
+  gloves: accessory
+  hairwear: accessory
+  hats: accessory
+  legwear: accessory
+  necklace: accessory
+  neckwear: accessory
+  rings: accessory
+  watches: accessory
+
+v1_slots:
+  - top
+  - bottom
+  - dress
+  - outerwear
+  - shoes

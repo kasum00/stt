@@ -1,0 +1,136 @@
+allowed_categories:
+  - top
+  - bottom
+  - dress
+  - outerwear
+  - shoes
+  - accessory
+
+
+# =========================================================
+# CORE OFFICE WEAR
+#
+# Items normally appropriate for office outfits.
+# =========================================================
+
+core_subcategories:
+  # TOP
+  - blouse
+  - shirt
+  - sweater
+  - cardigan
+  - vest
+
+  # BOTTOM
+  - trousers
+  - skirt
+
+  # DRESS
+  - sheath_dress
+  - shirt_dress
+  - wrap_dress
+  - a_line_dress
+  - midi_dress
+
+  # OUTERWEAR
+  - blazer
+  - coat
+  - trench_coat
+
+  # SHOES
+  - heels
+  - flats
+  - loafers
+
+
+# =========================================================
+# EXTENDED / BUSINESS-CASUAL
+#
+# May be appropriate depending on styling/context.
+# =========================================================
+
+extended_subcategories:
+  # TOP
+  - polo
+  - t_shirt
+  - other_top
+
+  # BOTTOM
+  - jeans
+  - shorts
+  - other_bottom
+
+  # DRESS
+  - other_dress
+
+  # OUTERWEAR
+  - jacket
+  - other_outerwear
+
+  # SHOES
+  - sneakers
+  - boots
+  - sandals
+  - other_shoes
+
+  # ACCESSORIES
+  - bag
+  - handbag
+  - tote_bag
+  - shoulder_bag
+  - crossbody_bag
+  - clutch
+  - backpack
+  - other_accessory
+
+
+# =========================================================
+# HARD EXCLUDE DESIGN DETAILS
+# =========================================================
+
+hard_exclude_design_details:
+  - backless
+  - cutout
+
+
+# =========================================================
+# REVIEW DESIGN DETAILS
+# =========================================================
+
+review_design_details:
+  - sequined
+
+
+# =========================================================
+# HARD EXCLUDE TAGS
+# =========================================================
+
+hard_exclude_tags:
+  - activewear
+  - active
+  - gym
+  - workout
+  - beachwear
+  - swimwear
+  - bikini
+  - sleepwear
+  - lingerie
+
+
+# =========================================================
+# REVIEW TAGS
+# =========================================================
+
+review_tags:
+  - festival
+  - coachella
+  - party
+  - cocktail
+  - loungewear
+
+
+# =========================================================
+# MINIMUM ATTRIBUTE COVERAGE
+# =========================================================
+
+minimum_target_fields: 2

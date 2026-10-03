@@ -1,0 +1,19 @@
+<svg width="640" height="760" viewBox="0 0 640 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="760" rx="38" fill="#EAF2FF"/>
+  <circle cx="500" cy="144" r="82" fill="#D7E6FF"/>
+  <circle cx="124" cy="622" r="112" fill="#FCE8E8"/>
+  <path d="M105 650C124 565 182 516 260 500C340 483 432 505 496 560C537 595 558 637 572 700H105V650Z" fill="#F7FAFF"/>
+  <path d="M244 244C244 189 283 147 330 147C377 147 416 189 416 244V301H244V244Z" fill="#4B70D8"/>
+  <ellipse cx="330" cy="232" rx="63" ry="76" fill="#E8B08E"/>
+  <path d="M267 220C272 150 394 146 399 226C374 197 342 190 301 207C291 221 280 228 267 220Z" fill="#3B2A32"/>
+  <path d="M255 298L330 355L405 298L475 392L430 668H230L185 392L255 298Z" fill="#668DE0"/>
+  <path d="M280 314L330 355L380 314L357 463H303L280 314Z" fill="#FFFDFB"/>
+  <path d="M230 668L199 724H289L304 668H230Z" fill="#263759"/>
+  <path d="M430 668L461 724H371L356 668H430Z" fill="#263759"/>
+  <path d="M197 389L135 516" stroke="#E8B08E" stroke-width="22" stroke-linecap="round"/>
+  <path d="M463 389L526 516" stroke="#E8B08E" stroke-width="22" stroke-linecap="round"/>
+  <path d="M162 517L132 552" stroke="#263759" stroke-width="24" stroke-linecap="round"/>
+  <path d="M514 517L544 552" stroke="#263759" stroke-width="24" stroke-linecap="round"/>
+  <text x="54" y="86" fill="#3F67C8" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">HERSTYLE AI</text>
+  <text x="54" y="712" fill="#23345A" font-family="Georgia, serif" font-size="27" font-weight="700">Your style, your story.</text>
+</svg>

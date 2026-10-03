@@ -1,0 +1,23 @@
+category:
+  version: v3
+  feature_type: combined
+  loss_mode: unweighted
+  checkpoint: outputs/dinov2_v3/checkpoints/category__combined__unweighted.pt
+
+color:
+  version: v3
+  feature_type: combined
+  loss_mode: unweighted
+  checkpoint: outputs/dinov2_v3/checkpoints/color__combined__unweighted.pt
+
+material:
+  version: v2
+  feature_type: cls
+  loss_mode: weighted
+  checkpoint: outputs/dinov2_v2/best_material.pt
+
+pattern:
+  version: v3
+  feature_type: mean_patch
+  loss_mode: weighted
+  checkpoint: outputs/dinov2_v3/checkpoints/pattern__mean_patch__weighted.pt

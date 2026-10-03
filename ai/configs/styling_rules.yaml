@@ -1,0 +1,14 @@
+version: "1.0"
+
+# =========================================================
+# HERSTYLEAI STYLING SCORE
+#
+# These are engineering weights for V1.
+# They are NOT learned parameters yet.
+# =========================================================
+
+weights:
+
+  color: 0.55
+
+  pattern: 0.45

@@ -1,0 +1,60 @@
+model:
+  name: facebook/dinov2-small
+  image_size: 224
+  freeze_backbone: true
+
+heads:
+  category:
+    labels:
+      - top
+      - bottom
+      - dress
+      - outerwear
+
+  color:
+    labels:
+      - black
+      - white
+      - gray
+      - beige
+      - brown
+      - navy
+      - blue
+      - green
+      - red
+      - pink
+      - purple
+      - yellow
+      - orange
+      - metallic
+      - multicolor
+
+  material:
+    labels:
+      - cotton
+      - polyester
+      - viscose_rayon
+      - denim
+      - synthetic
+      - blended
+
+  pattern:
+    labels:
+      - solid
+      - striped
+      - plaid
+      - checked
+      - floral
+      - polka_dot
+      - animal_print
+      - geometric
+      - abstract
+      - graphic
+
+training:
+  batch_size: 32
+  epochs: 20
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  num_workers: 4
+  seed: 42

@@ -1,0 +1,9 @@
+model:
+  name: Qwen/Qwen3-VL-2B-Instruct
+  max_new_tokens: 160
+
+generation:
+  do_sample: false
+
+inference:
+  device: cuda

@@ -1,0 +1,21 @@
+model:
+  checkpoint: outputs/repolyvore_compatibility/checkpoints/cls.pt
+  backbone: facebook/dinov2-small
+  feature_type: cls
+
+slots:
+  - top
+  - bottom
+  - dress
+  - outerwear
+  - shoes
+
+selection:
+  metric: validation_roc_auc
+  threshold: 0.51
+
+test_metrics:
+  roc_auc: 0.643677035133024
+  pr_auc: 0.367243304254643
+  f1: 0.42911461162411735
+  balanced_accuracy: 0.5994332818134982

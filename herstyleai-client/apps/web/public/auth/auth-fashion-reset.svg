@@ -1,0 +1,19 @@
+<svg width="640" height="760" viewBox="0 0 640 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="760" rx="38" fill="#EEF8F7"/>
+  <circle cx="496" cy="142" r="82" fill="#D3F0EA"/>
+  <circle cx="117" cy="625" r="113" fill="#E2E8FF"/>
+  <path d="M90 700C118 573 194 500 322 493C450 487 527 571 570 700H90Z" fill="#FFFFFF"/>
+  <ellipse cx="320" cy="223" rx="64" ry="78" fill="#C98D6D"/>
+  <path d="M255 216C262 134 380 134 397 215C375 188 340 181 300 202C286 217 269 225 255 216Z" fill="#302B3A"/>
+  <path d="M246 302L320 351L394 302L474 684H166L246 302Z" fill="#79BFC0"/>
+  <path d="M246 302L320 351L394 302L372 432H268L246 302Z" fill="#F5FFFD"/>
+  <path d="M258 461H382" stroke="#4B979A" stroke-width="4" opacity=".65"/>
+  <path d="M245 682L208 728H302L313 682H245Z" fill="#34405D"/>
+  <path d="M395 682L432 728H338L327 682H395Z" fill="#34405D"/>
+  <path d="M196 388L132 526" stroke="#C98D6D" stroke-width="22" stroke-linecap="round"/>
+  <path d="M444 388L508 526" stroke="#C98D6D" stroke-width="22" stroke-linecap="round"/>
+  <path d="M100 531C100 510 117 493 138 493C159 493 176 510 176 531C176 552 159 569 138 569C117 569 100 552 100 531Z" fill="#4C7ED6"/>
+  <path d="M126 531L136 541L153 520" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="54" y="86" fill="#3D9292" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">A FRESH START</text>
+  <text x="54" y="712" fill="#264C57" font-family="Georgia, serif" font-size="27" font-weight="700">Step back into your style.</text>
+</svg>

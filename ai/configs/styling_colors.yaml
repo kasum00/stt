@@ -1,0 +1,337 @@
+version: "1.0"
+
+# =========================================================
+# HERSTYLEAI STYLING COLORS
+#
+# IMPORTANT:
+# - This file belongs to the styling layer.
+# - It does NOT replace configs/taxonomy.yaml.
+# - "coarse" must map back to the existing color taxonomy.
+# =========================================================
+
+
+# =========================================================
+# FINE-GRAINED COLORS
+# =========================================================
+
+colors:
+
+  # -------------------------------------------------------
+  # BLACK / WHITE / NEUTRALS
+  # -------------------------------------------------------
+
+  black:
+    coarse: black
+    family: neutral
+
+  white:
+    coarse: white
+    family: neutral
+
+  ivory:
+    coarse: white
+    family: neutral
+
+  cream:
+    coarse: white
+    family: neutral
+
+  gray:
+    coarse: gray
+    family: neutral
+
+  charcoal_gray:
+    coarse: gray
+    family: neutral
+
+  beige:
+    coarse: beige
+    family: neutral
+
+
+  # -------------------------------------------------------
+  # EARTH / BROWN
+  # -------------------------------------------------------
+
+  brown:
+    coarse: brown
+    family: earth
+
+  camel:
+    coarse: brown
+    family: earth
+
+  tan:
+    coarse: brown
+    family: earth
+
+  chocolate_brown:
+    coarse: brown
+    family: earth
+
+  khaki:
+    coarse: beige
+    family: earth
+
+
+  # -------------------------------------------------------
+  # BLUE
+  # -------------------------------------------------------
+
+  blue:
+    coarse: blue
+    family: blue
+
+  navy:
+    coarse: navy
+    family: blue
+
+  powder_blue:
+    coarse: blue
+    family: blue
+
+  sky_blue:
+    coarse: blue
+    family: blue
+
+  steel_blue:
+    coarse: blue
+    family: blue
+
+  dusty_blue:
+    coarse: blue
+    family: blue
+
+  soft_blue:
+    coarse: blue
+    family: blue
+
+  gray_blue:
+    coarse: blue
+    family: blue
+
+
+  # -------------------------------------------------------
+  # GREEN
+  # -------------------------------------------------------
+
+  green:
+    coarse: green
+    family: green
+
+  sage:
+    coarse: green
+    family: green
+
+  olive:
+    coarse: green
+    family: green
+
+  light_olive:
+    coarse: green
+    family: green
+
+  moss:
+    coarse: green
+    family: green
+
+
+  # -------------------------------------------------------
+  # PINK / ROSE
+  # -------------------------------------------------------
+
+  pink:
+    coarse: pink
+    family: rose
+
+  blush_pink:
+    coarse: pink
+    family: rose
+
+  dusty_pink:
+    coarse: pink
+    family: rose
+
+  dusty_rose:
+    coarse: pink
+    family: rose
+
+  rose_beige:
+    coarse: pink
+    family: rose
+
+  mauve:
+    coarse: purple
+    family: rose
+
+
+  # -------------------------------------------------------
+  # RED / WINE
+  # -------------------------------------------------------
+
+  red:
+    coarse: red
+    family: red
+
+  burgundy:
+    coarse: red
+    family: red
+
+  wine:
+    coarse: red
+    family: red
+
+
+  # -------------------------------------------------------
+  # PURPLE
+  # -------------------------------------------------------
+
+  purple:
+    coarse: purple
+    family: purple
+
+
+  # -------------------------------------------------------
+  # YELLOW / ORANGE
+  # -------------------------------------------------------
+
+  yellow:
+    coarse: yellow
+    family: warm
+
+  orange:
+    coarse: orange
+    family: warm
+
+
+  # -------------------------------------------------------
+  # SPECIAL
+  # -------------------------------------------------------
+
+  metallic:
+    coarse: metallic
+    family: special
+
+  multicolor:
+    coarse: multicolor
+    family: multicolor
+
+  other:
+    coarse: other
+    family: other
+
+
+# =========================================================
+# NEUTRAL COLORS
+#
+# Safe colors for balancing patterned garments.
+# =========================================================
+
+neutral_colors:
+
+  - black
+  - white
+  - ivory
+  - cream
+  - gray
+  - charcoal_gray
+  - beige
+  - brown
+  - camel
+  - tan
+
+
+# =========================================================
+# COLOR HARMONY GROUPS
+#
+# Used later by StylingRuleEngine.
+# =========================================================
+
+harmony_groups:
+
+  blue_harmony:
+
+    - navy
+    - powder_blue
+    - sky_blue
+    - steel_blue
+    - dusty_blue
+    - soft_blue
+    - gray_blue
+
+  earth_harmony:
+
+    - ivory
+    - cream
+    - beige
+    - camel
+    - tan
+    - brown
+    - chocolate_brown
+
+  green_harmony:
+
+    - sage
+    - olive
+    - light_olive
+    - moss
+    - khaki
+    - ivory
+    - cream
+    - beige
+
+  rose_harmony:
+
+    - blush_pink
+    - dusty_pink
+    - dusty_rose
+    - mauve
+    - rose_beige
+    - burgundy
+    - wine
+
+
+# =========================================================
+# CORE OFFICE COLOR COMBINATIONS
+#
+# These are styling knowledge, not training labels.
+# =========================================================
+
+office_combinations:
+
+  ivory:
+
+    - [ivory, navy, camel]
+    - [ivory, beige, brown]
+    - [ivory, gray, burgundy]
+
+  white:
+
+    - [white, navy, beige]
+    - [white, gray, black]
+    - [white, gray, brown]
+    - [white, beige, burgundy]
+
+  beige:
+
+    - [beige, white, brown]
+    - [beige, ivory, navy]
+    - [beige, olive, camel]
+
+  navy:
+
+    - [navy, ivory, camel]
+    - [navy, white, beige]
+    - [navy, gray, burgundy]
+
+  gray:
+
+    - [gray, white, navy]
+    - [gray, ivory, brown]
+    - [gray, dusty_pink, white]
+
+  brown:
+
+    - [brown, ivory, beige]
+    - [brown, white, navy]
+    - [brown, cream, olive]

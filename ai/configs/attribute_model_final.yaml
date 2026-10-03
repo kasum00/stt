@@ -1,0 +1,25 @@
+attribute_model_final.yamlbackbone:
+  name: facebook/dinov2-small
+  frozen: true
+
+heads:
+
+  category:
+    version: v3
+    feature_type: combined
+    checkpoint: outputs/dinov2_v3/checkpoints/category__combined__unweighted.pt
+
+  color:
+    version: v4
+    feature_type: color_descriptor
+    checkpoint: outputs/color_v4/checkpoints/color_descriptor__weighted.pt
+
+  material:
+    version: v2
+    feature_type: cls
+    checkpoint: outputs/dinov2_v2/best_material.pt
+
+  pattern:
+    version: v3
+    feature_type: mean_patch
+    checkpoint: outputs/dinov2_v3/checkpoints/pattern__mean_patch__weighted.pt

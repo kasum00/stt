@@ -1,0 +1,61 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python environments, caches and local artifacts
+ai/.venv/
+ai/.venv-auth/
+ai/venv/
+ai/**/__pycache__/
+ai/**/*.py[cod]
+ai/.pytest_cache/
+ai/.mypy_cache/
+ai/.ruff_cache/
+ai/.coverage
+ai/htmlcov/
+
+# Local user data, datasets, uploads and generated reports
+ai/data/
+ai/test_images/
+ai/outputs/
+ai/runtime-data/
+
+# Model checkpoints are intentionally not included by default.
+# The small runtime checkpoints needed by the API are force-added explicitly.
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Frontend dependencies and build output
+herstyleai-client/apps/web/node_modules/
+herstyleai-client/apps/web/.next/
+herstyleai-client/apps/web/out/
+herstyleai-client/apps/web/build/
+herstyleai-client/apps/web/.vercel/
+herstyleai-client/apps/web/*.tsbuildinfo
+herstyleai-client/apps/web/next-env.d.ts
+herstyleai-client/apps/mobile/
+herstyleai-client/packages/
+
+# Frontend local environment and generated files
+herstyleai-client/apps/web/.env*
+!herstyleai-client/apps/web/.env.example
+herstyleai-client/apps/web/npm-debug.log*
+herstyleai-client/apps/web/yarn-debug.log*
+herstyleai-client/apps/web/yarn-error.log*
+herstyleai-client/apps/web/app/*.before-*
+herstyleai-client/apps/web/app/*.new
+
+# Nested repository metadata and editor/system files
+**/.git/
+**/.git.original/
+**/.codex/
+**/.agents/
+/.local-git-backups/
+**/AGENTS.md
+**/CLAUDE.md
+.DS_Store
+Thumbs.db
+*.pem

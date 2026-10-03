@@ -1,0 +1,172 @@
+version: "1.0"
+
+category:
+  - top
+  - bottom
+  - dress
+  - outerwear
+  - shoes
+  - accessory
+
+subcategory:
+
+  top:
+    - blouse
+    - shirt
+    - t_shirt
+    - polo
+    - sweater
+    - cardigan
+    - vest
+    - other_top
+
+  bottom:
+    - trousers
+    - jeans
+    - skirt
+    - shorts
+    - other_bottom
+
+  dress:
+    - sheath_dress
+    - shirt_dress
+    - wrap_dress
+    - a_line_dress
+    - midi_dress
+    - other_dress
+
+  outerwear:
+    - blazer
+    - jacket
+    - coat
+    - trench_coat
+    - other_outerwear
+
+  shoes:
+    - heels
+    - flats
+    - loafers
+    - sneakers
+    - boots
+    - sandals
+    - other_shoes
+
+  accessory:
+    - bag
+    - handbag
+    - tote_bag
+    - shoulder_bag
+    - crossbody_bag
+    - clutch
+    - backpack
+    - other_accessory
+
+
+color:
+  - black
+  - white
+  - gray
+  - beige
+  - brown
+  - blue
+  - navy
+  - red
+  - pink
+  - purple
+  - green
+  - yellow
+  - orange
+  - metallic
+  - multicolor
+  - other
+
+
+material:
+  - cotton
+  - polyester
+  - viscose_rayon
+  - wool
+  - linen
+  - silk
+  - denim
+  - leather
+  - synthetic
+  - blended
+  - other
+
+
+pattern:
+  - solid
+  - striped
+  - checked
+  - plaid
+  - floral
+  - polka_dot
+  - geometric
+  - animal_print
+  - abstract
+  - graphic
+  - other
+
+
+sleeve_length:
+  - sleeveless
+  - short
+  - elbow
+  - three_quarter
+  - long
+  - other
+
+
+neckline:
+  - round
+  - v_neck
+  - square
+  - boat
+  - collared
+  - turtleneck
+  - sweetheart
+  - halter
+  - strapless
+  - other
+
+
+fit:
+  - slim
+  - regular
+  - relaxed
+  - oversized
+  - fitted
+  - straight
+  - other
+
+
+design_details:
+  - asymmetric
+  - backless
+  - beaded
+  - bow
+  - buttons
+  - cutout
+  - embroidered
+  - lace_detail
+  - pleated
+  - ruffled
+  - sequined
+  - slit
+  - tie
+  - zipper
+
+
+style_tags:
+  - office
+  - business
+  - business_casual
+  - formal
+  - smart_casual
+  - casual
+  - minimal
+  - elegant
+  - classic
+  - feminine
+  - modern
