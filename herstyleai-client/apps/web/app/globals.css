@@ -110,4 +110,11 @@
 .error-copy{color:#b4485d;font-size:13px;margin:0}.stylist-error{display:flex;align-items:center;gap:12px;margin:12px 0}.stylist-empty.is-loading{background:linear-gradient(180deg,#fbfdff,#f4f8ff);border-color:#a9c5f6}.stylist-empty.is-loading svg{color:var(--blue);animation:stylist-pulse 1.25s ease-in-out infinite}.stylist-empty.is-loading .btn{opacity:.75;cursor:wait}@keyframes stylist-pulse{0%,100%{transform:scale(.92);opacity:.55}50%{transform:scale(1.08);opacity:1}}
 @media(max-width:680px){.stylist-request{align-items:stretch;flex-direction:column;padding:8px}.stylist-request input{width:100%}.stylist-request .btn{width:100%}.outfit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+/* The planner now owns the outfit request flow. Keep the event picker aligned
+   with the request field and give each day card enough room for its images. */
+.stylist-request select{height:46px;max-width:260px;padding:0 34px 0 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:#53627d;outline:0}
+.day-card-items{min-height:118px}
+.day-card-items img{height:112px}
+@media(max-width:680px){.stylist-request select{width:100%;max-width:none}}
+
 

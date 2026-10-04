@@ -9,7 +9,6 @@ import { useAuth } from "@/lib/auth/auth-context";
 const links = [
   ["/", "Trang chủ"],
   ["/wardrobe", "Tủ đồ của tôi"],
-  ["/stylist", "AI Stylist"],
   ["/planner", "Lịch phối đồ"],
   ["/calendar", "Sự kiện"],
   ["/chat", "Chat với AI"],

@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { ProtectedMediaImage } from "@/components/ProtectedMediaImage";
-import { api, cacheWeeklyRecommendation, readCachedWeeklyRecommendation, resolveMediaUrl, ScheduleDay, WeeklyResponse, WardrobeItem } from "@/lib/api";
+import { api, cacheWeeklyRecommendation, CalendarEvent, readCachedWeeklyRecommendation, resolveMediaUrl, ScheduleDay, WeeklyResponse, WardrobeItem } from "@/lib/api";
 import { categoryLabel, colorLabel, outfitTitle, patternLabel, temperatureLabel, titleCase } from "@/lib/format";
 
 function imageFor(item: WardrobeItem) {
@@ -37,10 +36,13 @@ function DayOutfitDialog({ day, onClose }: { day: ScheduleDay; onClose: () => vo
 }
 
 export default function PlannerPage() {
+  const [request, setRequest] = useState("Đi làm thanh lịch");
   const [weekly, setWeekly] = useState<WeeklyResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedDay, setSelectedDay] = useState<ScheduleDay | null>(null);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [eventId, setEventId] = useState("");
 
   const loadWeekly = useCallback(() => {
     setLoading(true);
@@ -55,6 +57,7 @@ export default function PlannerPage() {
   }, []);
 
   useEffect(() => {
+    api.listCalendarEvents({ limit: 50 }).then((result) => setEvents(result.items)).catch(() => undefined);
     const timer = window.setTimeout(() => {
       api.getLatestWeeklyRecommendation().then((latest) => {
         if (latest.schedule.length) {
@@ -83,12 +86,42 @@ export default function PlannerPage() {
     return () => window.clearTimeout(timer);
   }, [loadWeekly]);
 
+  async function generate(event?: FormEvent) {
+    event?.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const result = await api.getWeeklyRecommendation({
+        latitude: 21.0285,
+        longitude: 105.8542,
+        prefer_dress: false,
+        days: 7,
+        styling_request: request.trim() || null,
+        event_id: eventId || null,
+      });
+      cacheWeeklyRecommendation(result);
+      setWeekly(result);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Không thể tạo lịch phối đồ lúc này.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const days = weekly?.schedule ?? [];
   return <div className="content-page">
-    <div className="page-heading"><div><h1>Lịch phối đồ tuần này</h1><p>AI đã tạo lịch phối đồ dựa trên thời tiết và tủ đồ của bạn</p></div><Link href="/stylist" className="btn ghost">Tạo lịch mới</Link></div>
+    <div className="page-heading"><div><h1>Lịch phối đồ tuần này</h1><p>AI đã tạo lịch phối đồ dựa trên thời tiết và tủ đồ của bạn</p></div></div>
+    <form className="stylist-request" onSubmit={generate}>
+      <input value={request} onChange={(event) => setRequest(event.target.value)} placeholder="Ví dụ: Mai đi làm, tone sáng, không đi sneaker" aria-label="Yêu cầu phối đồ" />
+      <select value={eventId} onChange={(event) => setEventId(event.target.value)} aria-label="Sự kiện lịch">
+        <option value="">Không gắn sự kiện</option>
+        {events.map((item) => <option key={item.id} value={item.id}>{item.title} · {new Date(item.start_at).toLocaleDateString("vi-VN")}</option>)}
+      </select>
+      <button className="btn primary" disabled={loading} aria-busy={loading}>{loading ? "Đang phân tích…" : "Tạo lịch phối đồ"}<Icon name="sparkle" size={16} /></button>
+    </form>
+    <div className="tabs planner-tabs"><button className="active" type="button">Hằng ngày</button><button type="button" onClick={() => setRequest("Đi làm thanh lịch")}>Đi làm</button><button type="button" onClick={() => setRequest("Đi dự tiệc, tone sáng")}>Dự tiệc</button><button type="button" onClick={() => setRequest("Hẹn hò, nữ tính")}>Hẹn hò</button><button type="button" onClick={() => setRequest("Đi du lịch thoải mái")}>Du lịch</button></div>
     <div className="week-label">‹ <strong>7 ngày sắp tới</strong> ›</div>
     {loading ? <div className="empty-state"><h3>Đang tải lịch phối đồ…</h3></div> : error ? <div className="planner-error"><Icon name="sparkle" size={22} /><div><strong>Chưa tạo được lịch tuần</strong><p>{error}</p></div><button className="btn ghost" type="button" onClick={loadWeekly}>Thử lại</button></div> : <div className="week-grid">{days.map((day, index) => <DayCard key={day.day} day={day} active={index === 0} onOpen={() => setSelectedDay(day)} />)}</div>}
-    <section className="accessory-strip"><h3>Gợi ý phụ kiện theo thời tiết tuần này</h3><div><article><Icon name="sun" size={22} /><span>Ưu tiên lớp nhẹ, dễ cởi khi trời ấm.</span></article><article><Icon name="calendar" size={22} /><span>Lịch được sắp theo cấu trúc outfit đa dạng.</span></article><article><Icon name="sparkle" size={22} /><span>Phản hồi của bạn sẽ giúp gợi ý tốt hơn.</span></article></div></section>
     {selectedDay ? <DayOutfitDialog day={selectedDay} onClose={() => setSelectedDay(null)} /> : null}
   </div>;
 }
