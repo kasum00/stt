@@ -371,6 +371,7 @@ class WeatherAwareRecommendationService:
         styling_request=None,
         wardrobe_items=None,
         calendar_event=None,
+        variation=0,
     ):
 
         # =====================================
@@ -572,6 +573,7 @@ class WeatherAwareRecommendationService:
                 bandit_runtime=(
                     self.bandit_runtime
                 ),
+                variation=variation,
             )
         )
 

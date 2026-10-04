@@ -415,6 +415,51 @@ class WeeklyOutfitScheduler:
 
         return scored[0] if scored else None
 
+    @staticmethod
+    def _selection_candidates(candidates):
+        """Build a diverse selection pool before score/bandit selection."""
+
+        def is_clean(candidate):
+            scheduler = candidate.get("scheduler") or {}
+            return (
+                scheduler.get("styling_cooldown_item_count", 0) == 0
+                and scheduler.get("weekly_repeat_count", 0) == 0
+                and not scheduler.get("exact_outfit_used_before", False)
+            )
+
+        def no_weekly_repeat(candidate):
+            scheduler = candidate.get("scheduler") or {}
+            return (
+                scheduler.get("weekly_repeat_count", 0) == 0
+                and not scheduler.get("exact_outfit_used_before", False)
+            )
+
+        def no_cooldown(candidate):
+            scheduler = candidate.get("scheduler") or {}
+            return scheduler.get("styling_cooldown_item_count", 0) == 0
+
+        # Prefer unused items and unique combinations, but fall back when the
+        # wardrobe does not contain enough alternatives for all seven days.
+        for predicate in (is_clean, no_weekly_repeat, no_cooldown):
+            selected = [candidate for candidate in candidates if predicate(candidate)]
+            if selected:
+                return selected
+
+        return list(candidates)
+
+    @staticmethod
+    def _rotate_selection(candidates, variation, day_index):
+        """Pick a different high-quality candidate when regenerating."""
+
+        if not candidates or not variation or len(candidates) == 1:
+            return candidates[0] if candidates else None
+
+        # Stay within the best five candidates so variation does not trade
+        # away recommendation quality for a random low-scoring outfit.
+        pool_size = min(len(candidates), 5)
+        offset = (int(variation) + int(day_index) - 1) % pool_size
+        return candidates[offset]
+
     # =====================================================
     # CREATE WEEKLY PLAN
     # =====================================================
@@ -433,6 +478,7 @@ class WeeklyOutfitScheduler:
         user_id="default",
         bandit_decision_logger=None,
         bandit_runtime=None,
+        variation=0,
     ):
 
         use_learned_personalization = (
@@ -607,6 +653,10 @@ class WeeklyOutfitScheduler:
                 )
             )
 
+            selection_candidates = self._selection_candidates(
+                scheduler_candidates
+            )
+
             # =============================================
             # P10 BANDIT DECISION
             #
@@ -616,13 +666,13 @@ class WeeklyOutfitScheduler:
             # =============================================
             bandit_decision = None
 
-            if bandit_runtime is not None:
+            if bandit_runtime is not None and not variation:
 
                 try:
 
                     bandit_decision = (
                         bandit_runtime.choose(
-                            scheduler_candidates
+                            selection_candidates
                         )
                     )
 
@@ -655,9 +705,14 @@ class WeeklyOutfitScheduler:
                     "selected"
                 )
 
-            if selected is None and scheduler_candidates:
-
-                selected = scheduler_candidates[0]
+            if variation:
+                selected = self._rotate_selection(
+                    selection_candidates,
+                    variation=variation,
+                    day_index=day_index,
+                )
+            elif selected is None and selection_candidates:
+                selected = selection_candidates[0]
 
             if selected is None:
 
@@ -718,7 +773,7 @@ class WeeklyOutfitScheduler:
                             structure=structure,
                             context=day_context,
                             request_applied=request_applied,
-                            candidates=scheduler_candidates,
+                            candidates=selection_candidates,
                             selected=selected,
                             behavior_policy=(
                                 (

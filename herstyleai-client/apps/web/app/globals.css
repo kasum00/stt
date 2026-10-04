@@ -117,9 +117,10 @@
 .day-card-items img{height:112px}
 @media(max-width:680px){.stylist-request select{width:100%;max-width:none}}
 
-.cloth-status{display:block;margin-top:8px;font-style:normal;font-size:11px;font-weight:650}
-.cloth-status.new{color:#71809b}
-.cloth-status.ready{color:#2d8b67}
-.cloth-status.cooldown{color:#c1842a}
+.cloth-card .cloth-details{display:block;color:var(--muted);font-size:12px}
+.cloth-card .cloth-status{display:inline-flex;align-items:center;gap:5px;margin-top:9px;border:1px solid transparent;border-radius:999px;padding:4px 8px;font-style:normal;font-size:10px;font-weight:700;line-height:1}
+.cloth-card .cloth-status i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.cloth-card .cloth-status.unused{color:#b5495b;background:#fff0f2;border-color:#f5cbd2}
+.cloth-card .cloth-status.used{color:#21845b;background:#eaf8f0;border-color:#c4ead4}
 
 

@@ -53,14 +53,21 @@ function WardrobeImage({ item, alt }: { item: WardrobeItem; alt: string }) {
 }
 
 function stylingStatus(item: WardrobeItem) {
-  if (!item.last_styled_at) return { label: "Chưa được phối", tone: "new" };
-  if (item.styling_cooldown_active && item.styling_available_at) {
-    return {
-      label: `Được dùng lại từ ${new Date(item.styling_available_at).toLocaleDateString("vi-VN")}`,
-      tone: "cooldown",
-    };
+  if (!item.last_styled_at) {
+    return { label: "Chưa sử dụng", tone: "unused", title: "Món đồ này chưa được dùng trong lịch phối đồ." };
   }
-  return { label: "Có thể phối lại", tone: "ready" };
+
+  const availableAt = item.styling_available_at
+    ? new Date(item.styling_available_at).toLocaleDateString("vi-VN")
+    : null;
+
+  return {
+    label: "Đã sử dụng",
+    tone: "used",
+    title: item.styling_cooldown_active && availableAt
+      ? `Đã dùng. Có thể phối lại từ ${availableAt}.`
+      : "Đã dùng và hiện có thể phối lại.",
+  };
 }
 
 export default function WardrobePage() {
@@ -97,7 +104,7 @@ export default function WardrobePage() {
       <aside className="filter-panel">{filters.map(([value, label]) => <button className={`filter ${filter === value ? "active" : ""}`} onClick={() => setFilter(value)} key={value}><span>{label}</span><b>{value === "all" ? items.length : items.filter((item) => item.category === value).length}</b></button>)}</aside>
       <section>
         <div className="toolbar"><div className="search-box"><Icon name="search" size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tìm kiếm trang phục..." /></div><select value={filter} onChange={(event) => setFilter(event.target.value)}><option value="all">Tất cả</option><option value="top">Áo</option><option value="bottom">Quần</option><option value="dress">Váy</option><option value="outerwear">Khoác</option><option value="shoes">Giày</option></select></div>
-        {loading ? <div className="empty-state"><h3>Đang tải tủ đồ…</h3></div> : error ? <div className="empty-state"><h3>Không tải được tủ đồ</h3><p>{error}</p></div> : visibleItems.length === 0 ? <div className="empty-state"><h3>Chưa có món đồ phù hợp</h3><p>Hãy thêm trang phục hoặc thử bộ lọc khác.</p></div> : <div className="clothes-grid">{visibleItems.map((item) => { const status = stylingStatus(item); return <Link href={`/wardrobe/${item.item_id}`} className="cloth-card" key={item.item_id}><div className="cloth-img"><WardrobeImage item={item} alt={titleCase(item.subcategory ?? item.category ?? "Món đồ")} /><button type="button" aria-label="Tùy chọn món đồ" onClick={(event) => event.preventDefault()}>•••</button></div><strong>{titleCase(item.subcategory ?? item.category ?? "Món đồ")}</strong><span>{categoryLabel(item.category)} · {colorLabel(item.color)} · {patternLabel(item.pattern)}</span><em className={`cloth-status ${status.tone}`}>{status.label}</em></Link>; })}</div>}
+        {loading ? <div className="empty-state"><h3>Đang tải tủ đồ…</h3></div> : error ? <div className="empty-state"><h3>Không tải được tủ đồ</h3><p>{error}</p></div> : visibleItems.length === 0 ? <div className="empty-state"><h3>Chưa có món đồ phù hợp</h3><p>Hãy thêm trang phục hoặc thử bộ lọc khác.</p></div> : <div className="clothes-grid">{visibleItems.map((item) => { const status = stylingStatus(item); return <Link href={`/wardrobe/${item.item_id}`} className="cloth-card" key={item.item_id}><div className="cloth-img"><WardrobeImage item={item} alt={titleCase(item.subcategory ?? item.category ?? "Món đồ")} /><button type="button" aria-label="Tùy chọn món đồ" onClick={(event) => event.preventDefault()}>•••</button></div><strong>{titleCase(item.subcategory ?? item.category ?? "Món đồ")}</strong><span className="cloth-details">{categoryLabel(item.category)} · {colorLabel(item.color)} · {patternLabel(item.pattern)}</span><span className={`cloth-status ${status.tone}`} title={status.title}><i aria-hidden="true" />{status.label}</span></Link>; })}</div>}
       </section>
     </div>
   </div>;

@@ -228,6 +228,13 @@ class WeeklyRecommendationRequest(
         le=7,
     )
 
+    # Incremented by the UI when the user asks for another weekly option.
+    variation: int = Field(
+        default=0,
+        ge=0,
+        le=1_000_000,
+    )
+
     user_id: str = "default"
 
     styling_request: str | None = None
@@ -1050,6 +1057,7 @@ async def weekly_recommendation(
             styling_request=payload.styling_request,
             wardrobe_items=owned_items,
             calendar_event=calendar_event_context,
+            variation=payload.variation,
         )
         result["generation_id"] = uuid4().hex
 

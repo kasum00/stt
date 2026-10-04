@@ -43,6 +43,7 @@ export default function PlannerPage() {
   const [selectedDay, setSelectedDay] = useState<ScheduleDay | null>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [eventId, setEventId] = useState("");
+  const [variation, setVariation] = useState(0);
 
   const loadWeekly = useCallback(() => {
     setLoading(true);
@@ -88,6 +89,8 @@ export default function PlannerPage() {
 
   async function generate(event?: FormEvent) {
     event?.preventDefault();
+    const nextVariation = variation + 1;
+    setVariation(nextVariation);
     setLoading(true);
     setError("");
     try {
@@ -96,6 +99,7 @@ export default function PlannerPage() {
         longitude: 105.8542,
         prefer_dress: false,
         days: 7,
+        variation: nextVariation,
         styling_request: request.trim() || null,
         event_id: eventId || null,
       });
@@ -117,7 +121,7 @@ export default function PlannerPage() {
         <option value="">Không gắn sự kiện</option>
         {events.map((item) => <option key={item.id} value={item.id}>{item.title} · {new Date(item.start_at).toLocaleDateString("vi-VN")}</option>)}
       </select>
-      <button className="btn primary" disabled={loading} aria-busy={loading}>{loading ? "Đang phân tích…" : "Tạo lịch phối đồ"}<Icon name="sparkle" size={16} /></button>
+      <button className="btn primary" disabled={loading} aria-busy={loading}>{loading ? "Đang đổi bộ…" : weekly ? "Đổi bộ phối" : "Tạo lịch phối đồ"}<Icon name="sparkle" size={16} /></button>
     </form>
     <div className="tabs planner-tabs"><button className="active" type="button">Hằng ngày</button><button type="button" onClick={() => setRequest("Đi làm thanh lịch")}>Đi làm</button><button type="button" onClick={() => setRequest("Đi dự tiệc, tone sáng")}>Dự tiệc</button><button type="button" onClick={() => setRequest("Hẹn hò, nữ tính")}>Hẹn hò</button><button type="button" onClick={() => setRequest("Đi du lịch thoải mái")}>Du lịch</button></div>
     <div className="week-label">‹ <strong>7 ngày sắp tới</strong> ›</div>

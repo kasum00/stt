@@ -245,6 +245,7 @@ export type WeeklyRequest = {
   longitude: number;
   prefer_dress: boolean;
   days: number;
+  variation?: number;
   styling_request?: string | null;
   event_id?: string | null;
 };
