@@ -201,6 +201,7 @@ export type SavedOutfit = {
 export type WeeklyResponse = {
   days?: number;
   schedule: ScheduleDay[];
+  generation_id?: string | null;
   location?: { latitude?: number; longitude?: number };
   styling_request?: string | null;
   request_constraints?: Record<string, unknown> | null;
@@ -246,6 +247,8 @@ export type WeeklyRequest = {
   prefer_dress: boolean;
   days: number;
   variation?: number;
+  regenerate_day?: number;
+  generation_id?: string | null;
   styling_request?: string | null;
   event_id?: string | null;
 };
@@ -563,6 +566,13 @@ export const api = {
   },
 
   getWeeklyRecommendation(payload: WeeklyRequest) {
+    return request<WeeklyResponse>("/api/v1/recommendations/weekly", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }, 180000);
+  },
+
+  regenerateWeeklyDay(payload: WeeklyRequest) {
     return request<WeeklyResponse>("/api/v1/recommendations/weekly", {
       method: "POST",
       body: JSON.stringify(payload),

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
 
@@ -140,6 +141,39 @@ async def persist_generated_recommendations(
         ) from exc
 
     return persisted
+
+
+async def replace_owned_recommendation_day(
+    db: AsyncSession,
+    *,
+    user_id: UUID,
+    generation_id: str,
+    day: int,
+) -> int:
+    """Hide the previous version of one day before saving its replacement."""
+
+    records = list(
+        (
+            await db.scalars(
+                select(RecommendationRecord).where(
+                    RecommendationRecord.user_id == user_id,
+                    RecommendationRecord.source == "weekly",
+                    RecommendationRecord.deleted_at.is_(None),
+                )
+            )
+        ).all()
+    )
+    replaced = 0
+    timestamp = datetime.now(timezone.utc)
+    for record in records:
+        snapshot = record.snapshot or {}
+        if (
+            snapshot.get("generation_id") == generation_id
+            and int(snapshot.get("day") or 0) == int(day)
+        ):
+            record.deleted_at = timestamp
+            replaced += 1
+    return replaced
 
 
 async def list_owned_recommendations(

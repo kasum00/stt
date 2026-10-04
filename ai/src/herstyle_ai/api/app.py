@@ -127,6 +127,7 @@ from herstyle_ai.db.recommendations import (
     get_owned_recommendation,
     list_owned_recommendations,
     persist_generated_recommendations,
+    replace_owned_recommendation_day,
 )
 from herstyle_ai.db.calendar_events import get_owned_calendar_event
 
@@ -234,6 +235,14 @@ class WeeklyRecommendationRequest(
         ge=0,
         le=1_000_000,
     )
+
+    regenerate_day: int | None = Field(
+        default=None,
+        ge=1,
+        le=7,
+    )
+
+    generation_id: str | None = None
 
     user_id: str = "default"
 
@@ -1044,6 +1053,19 @@ async def weekly_recommendation(
 
     try:
 
+        previous_generation_id = payload.generation_id
+        if payload.regenerate_day is not None and not previous_generation_id:
+            previous_records = await list_owned_recommendations(
+                db,
+                user_id=current_user.id,
+                source="weekly",
+                limit=50,
+            )
+            if previous_records:
+                previous_generation_id = (
+                    (previous_records[0].snapshot or {}).get("generation_id")
+                )
+
         owned_records = await list_owned_wardrobe(db, current_user.id)
         owned_items = [record_to_domain_item(record) for record in owned_records]
 
@@ -1087,6 +1109,32 @@ async def weekly_recommendation(
             schedule_day[
                 "explanation"
             ] = explanation.to_dict()
+
+        if payload.regenerate_day is not None:
+            target_day = next(
+                (
+                    schedule_day
+                    for schedule_day in result.get("schedule", [])
+                    if int(schedule_day.get("day") or 0) == payload.regenerate_day
+                ),
+                None,
+            )
+            if target_day is None or not isinstance(target_day.get("outfit"), dict):
+                raise HTTPException(
+                    status_code=409,
+                    detail="Không thể tạo outfit thay thế cho ngày này",
+                )
+            result["schedule"] = [target_day]
+            if previous_generation_id:
+                result["generation_id"] = previous_generation_id
+
+            if previous_generation_id:
+                await replace_owned_recommendation_day(
+                    db,
+                    user_id=current_user.id,
+                    generation_id=previous_generation_id,
+                    day=payload.regenerate_day,
+                )
 
         styled_item_ids = {
             str(item.get("item_id"))
