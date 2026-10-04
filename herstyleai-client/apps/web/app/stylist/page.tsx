@@ -1,11 +1,10 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { api, CalendarEvent, Outfit, resolveMediaUrl, WeeklyResponse } from "@/lib/api";
+import { ProtectedMediaImage } from "@/components/ProtectedMediaImage";
+import { api, cacheWeeklyRecommendation, CalendarEvent, Outfit, resolveMediaUrl, WeeklyResponse } from "@/lib/api";
 import { outfitTitle, titleCase } from "@/lib/format";
 
 function itemImage(item: Record<string, unknown>) {
@@ -14,7 +13,7 @@ function itemImage(item: Record<string, unknown>) {
 
 function OutfitCard({ outfit, day }: { outfit: Outfit; day: number }) {
   const entries = Object.values(outfit.items ?? {});
-  return <article className="outfit-card"><div className="outfit-stack">{entries.slice(0, 4).map((item) => <div className="outfit-stack-item" key={item.item_id}>{itemImage(item) ? <img src={itemImage(item) ?? undefined} alt={titleCase(item.subcategory ?? item.category ?? "Món đồ")} /> : <Icon name="shirt" size={27} />}</div>)}<button className="heart-btn" type="button" aria-label="Lưu outfit"><Icon name="heart" size={17} /></button></div><h3>{outfitTitle(outfit.structure, entries.length)}</h3><p><span>Ngày {day}</span><span>AI Stylist</span></p></article>;
+  return <article className="outfit-card"><div className="outfit-stack">{entries.slice(0, 4).map((item) => <div className="outfit-stack-item" key={item.item_id}><ProtectedMediaImage src={itemImage(item)} alt={titleCase(item.subcategory ?? item.category ?? "Món đồ")} fallback={<Icon name="shirt" size={27} />} /></div>)}<button className="heart-btn" type="button" aria-label="Lưu outfit"><Icon name="heart" size={17} /></button></div><h3>{outfitTitle(outfit.structure, entries.length)}</h3><p><span>Ngày {day}</span><span>AI Stylist</span></p></article>;
 }
 
 export default function StylistPage() {
@@ -35,6 +34,7 @@ export default function StylistPage() {
     try {
       const result = await api.getWeeklyRecommendation({ latitude: 21.0285, longitude: 105.8542, prefer_dress: false, days: 7, styling_request: request.trim() || null, event_id: eventId || null });
       setWeekly(result);
+      cacheWeeklyRecommendation(result);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Không tạo được gợi ý.");
     } finally {

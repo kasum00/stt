@@ -1,54 +1,27 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { getAccessToken } from "@/lib/auth/token-store";
-import { api, resolveMediaUrl, ScheduleDay, WeeklyResponse, WardrobeItem } from "@/lib/api";
+import { ProtectedMediaImage } from "@/components/ProtectedMediaImage";
+import { api, cacheWeeklyRecommendation, readCachedWeeklyRecommendation, resolveMediaUrl, ScheduleDay, WeeklyResponse, WardrobeItem } from "@/lib/api";
 import { outfitTitle, temperatureLabel } from "@/lib/format";
 
 function imageFor(item: WardrobeItem) {
   return resolveMediaUrl([item.transparent_image_url, item.transparent_url, item.model_url, item.image_url, item.image_path].find((value): value is string => typeof value === "string"));
 }
 
-function ProtectedRecommendationImage({ item }: { item: WardrobeItem }) {
+function RecommendationImage({ item }: { item: WardrobeItem }) {
   const imagePath = imageFor(item);
-  const [src, setSrc] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    let objectUrl: string | null = null;
-    if (!imagePath) return undefined;
-
-    const token = getAccessToken();
-    fetch(imagePath, { headers: token ? { Authorization: `Bearer ${token}` } : undefined })
-      .then((response) => {
-        if (!response.ok) throw new Error("Image request failed");
-        return response.blob();
-      })
-      .then((blob) => {
-        if (cancelled) return;
-        objectUrl = URL.createObjectURL(blob);
-        setSrc(objectUrl);
-      })
-      .catch(() => {
-        if (!cancelled) setSrc(null);
-      });
-
-    return () => {
-      cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [imagePath]);
-
-  return src ? <img src={src} alt="" /> : <Icon name="shirt" size={17} />;
+  return <ProtectedMediaImage src={imagePath} alt="" fallback={<Icon name="shirt" size={17} />} />;
 }
 
 function DayCard({ day, active }: { day: ScheduleDay; active: boolean }) {
   const items = Object.values(day.outfit?.items ?? {});
-  return <article className={`day-card ${active ? "active" : ""}`}><strong>Ngày {day.day}</strong><span>{day.request_applied ? "Theo yêu cầu" : day.available_structure ? "Tối ưu theo tủ đồ" : "Gợi ý tự động"}</span><div className="day-weather"><Icon name="sun" size={16} />{temperatureLabel(day.weather?.temperature ?? day.weather?.temperature_c)}</div><div className="day-card-items">{items.slice(0, 3).map((item) => <div key={item.item_id}><ProtectedRecommendationImage item={item} /></div>)}</div><b>{day.outfit ? outfitTitle(day.outfit.structure, items.length) : "Chưa có outfit"}</b></article>;
+  const dateLabel = day.weather?.date
+    ? new Date(`${day.weather.date}T00:00:00`).toLocaleDateString("vi-VN", { weekday: "short", day: "numeric", month: "numeric" })
+    : `Ngày ${day.day}`;
+  return <article className={`day-card ${active ? "active" : ""}`}><strong>{dateLabel}</strong><small>Ngày {day.day}</small><span>{day.request_applied ? "Theo yêu cầu" : day.available_structure ? "Tối ưu theo tủ đồ" : "Gợi ý tự động"}</span><div className="day-weather"><Icon name="sun" size={16} />{temperatureLabel(day.weather?.temperature ?? day.weather?.temperature_c)}</div><div className="day-card-items">{items.slice(0, 3).map((item) => <div key={item.item_id}><RecommendationImage item={item} /></div>)}</div><b>{day.outfit ? outfitTitle(day.outfit.structure, items.length) : "Chưa có outfit"}</b></article>;
 }
 
 export default function PlannerPage() {
@@ -59,14 +32,25 @@ export default function PlannerPage() {
   const loadWeekly = useCallback(() => {
     setLoading(true);
     setError("");
-    api.getWeeklyRecommendation({ latitude: 21.0285, longitude: 105.8542, prefer_dress: false, days: 7 }).then(setWeekly).catch((reason) => {
+    api.getWeeklyRecommendation({ latitude: 21.0285, longitude: 105.8542, prefer_dress: false, days: 7 }).then((result) => {
+      cacheWeeklyRecommendation(result);
+      setWeekly(result);
+    }).catch((reason) => {
       setWeekly(null);
       setError(reason instanceof Error ? reason.message : "Không thể tạo lịch phối đồ lúc này.");
     }).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => loadWeekly(), 0);
+    const timer = window.setTimeout(() => {
+      const cached = readCachedWeeklyRecommendation();
+      if (cached?.schedule.length) {
+        setWeekly(cached);
+        setLoading(false);
+        return;
+      }
+      loadWeekly();
+    }, 0);
     return () => window.clearTimeout(timer);
   }, [loadWeekly]);
 

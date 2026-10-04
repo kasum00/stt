@@ -139,6 +139,7 @@ export type Outfit = {
 };
 
 export type Weather = {
+  date?: string | null;
   temperature?: number | null;
   temperature_c?: number | null;
   feels_like?: number | null;
@@ -203,6 +204,29 @@ export type WeeklyResponse = {
   calendar_event?: Record<string, unknown> | null;
   [key: string]: unknown;
 };
+
+const WEEKLY_RECOMMENDATION_CACHE_KEY = "herstyleai:weekly-recommendation:v1";
+
+export function cacheWeeklyRecommendation(value: WeeklyResponse) {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(WEEKLY_RECOMMENDATION_CACHE_KEY, JSON.stringify(value));
+  } catch {
+    // Storage can be unavailable in private browsing; the API result still works.
+  }
+}
+
+export function readCachedWeeklyRecommendation(): WeeklyResponse | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(WEEKLY_RECOMMENDATION_CACHE_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as WeeklyResponse;
+    return Array.isArray(value.schedule) ? value : null;
+  } catch {
+    return null;
+  }
+}
 
 export type WeeklyRequest = {
   latitude: number;
