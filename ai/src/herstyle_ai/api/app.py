@@ -118,6 +118,7 @@ from herstyle_ai.db.wardrobe import (
     apply_domain_item_to_record,
     get_owned_wardrobe,
     list_owned_wardrobe,
+    mark_styled_wardrobe_items,
     new_record_from_domain,
     record_to_domain_item,
 )
@@ -1078,6 +1079,19 @@ async def weekly_recommendation(
             schedule_day[
                 "explanation"
             ] = explanation.to_dict()
+
+        styled_item_ids = {
+            str(item.get("item_id"))
+            for schedule_day in result.get("schedule", [])
+            if isinstance(schedule_day.get("outfit"), dict)
+            for item in (schedule_day["outfit"].get("items") or {}).values()
+            if isinstance(item, dict) and item.get("item_id")
+        }
+        await mark_styled_wardrobe_items(
+            db,
+            user_id=current_user.id,
+            item_ids=styled_item_ids,
+        )
 
         try:
             await persist_generated_recommendations(

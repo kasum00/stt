@@ -22,7 +22,7 @@ export default function LoginPage() {
     try {
       await login(email.trim(), password);
       const next = new URLSearchParams(window.location.search).get("next");
-      router.replace(next?.startsWith("/") ? next : "/stylist");
+      router.replace(next?.startsWith("/") ? next : "/planner");
     } catch (reason) {
       setError(reason instanceof ApiError && reason.status === 401
         ? "Email hoặc mật khẩu không đúng."

@@ -12,7 +12,6 @@ const links = [
   ["/planner", "Lịch phối đồ"],
   ["/calendar", "Sự kiện"],
   ["/chat", "Chat với AI"],
-  ["/saved", "Đã lưu"]
 ] as const;
 
 export function AppHeader() {

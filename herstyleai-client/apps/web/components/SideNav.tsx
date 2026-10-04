@@ -3,11 +3,9 @@ import { Icon } from "./Icon";
 
 const items = [
   ["/", "Trang chủ", "home"],
-  ["/stylist", "AI Stylist", "sparkle"],
   ["/wardrobe", "Tủ đồ", "wardrobe"],
   ["/planner", "Lịch phối đồ", "calendar"],
   ["/calendar", "Sự kiện", "calendar"],
-  ["/saved", "Outfit đã lưu", "heart"],
   ["/chat", "Chat AI", "chat"],
   ["/profile", "Hồ sơ", "user"]
 ] as const;

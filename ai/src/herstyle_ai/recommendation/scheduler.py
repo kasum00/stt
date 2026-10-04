@@ -227,6 +227,12 @@ class WeeklyOutfitScheduler:
                 repeated_recent
             )
 
+            cooldown_item_count = sum(
+                1
+                for item in candidate["items"].values()
+                if item.get("styling_cooldown_active")
+            )
+
             signature = (
                 self._outfit_signature(
                     candidate
@@ -375,6 +381,9 @@ class WeeklyOutfitScheduler:
                     bool(
                         exact_outfit_used
                     ),
+
+                "styling_cooldown_item_count":
+                    int(cooldown_item_count),
             }
 
             scored.append(
@@ -382,12 +391,10 @@ class WeeklyOutfitScheduler:
             )
 
         scored.sort(
-            key=lambda x:
-                x[
-                    "scheduler"
-                ][
-                    "adjusted_score"
-                ],
+            key=lambda x: (
+                x["scheduler"]["styling_cooldown_item_count"] == 0,
+                x["scheduler"]["adjusted_score"],
+            ),
             reverse=True,
         )
 

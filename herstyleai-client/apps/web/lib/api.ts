@@ -91,6 +91,9 @@ export type WardrobeItem = {
   transparent_url?: string | null;
   model_url?: string | null;
   source?: string | null;
+  last_styled_at?: string | null;
+  styling_available_at?: string | null;
+  styling_cooldown_active?: boolean;
   [key: string]: unknown;
 };
 

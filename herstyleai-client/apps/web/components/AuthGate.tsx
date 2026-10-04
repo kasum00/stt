@@ -17,7 +17,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
     if (status === "authenticated" && (pathname === "/login" || pathname === "/register")) {
-      router.replace("/stylist");
+      router.replace("/planner");
     }
   }, [isPublic, pathname, router, status]);
 
