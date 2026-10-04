@@ -228,6 +228,15 @@ export function readCachedWeeklyRecommendation(): WeeklyResponse | null {
   }
 }
 
+export function clearCachedWeeklyRecommendation() {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(WEEKLY_RECOMMENDATION_CACHE_KEY);
+  } catch {
+    // Storage can be unavailable in private browsing.
+  }
+}
+
 export type WeeklyRequest = {
   latitude: number;
   longitude: number;
@@ -554,6 +563,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }, 180000);
+  },
+
+  getLatestWeeklyRecommendation() {
+    return request<WeeklyResponse>("/api/v1/recommendations/weekly/latest");
   },
 
   sendFeedback(payload: FeedbackPayload) {

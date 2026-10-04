@@ -124,6 +124,7 @@ from herstyle_ai.db.wardrobe import (
 from herstyle_ai.db.recommendations import (
     RecommendationPersistenceError,
     get_owned_recommendation,
+    list_owned_recommendations,
     persist_generated_recommendations,
 )
 from herstyle_ai.db.calendar_events import get_owned_calendar_event
@@ -653,6 +654,84 @@ def prepare_public_response(
 
     return result
 
+
+def _restore_weekly_response(
+    records,
+    wardrobe_items,
+    request: Request,
+):
+    """Rebuild a displayable weekly response from persisted snapshots."""
+
+    if not records:
+        return {"days": 0, "schedule": []}
+
+    latest_snapshot = dict(records[0].snapshot or {})
+    generation_id = latest_snapshot.get("generation_id")
+    if generation_id:
+        records = [
+            record
+            for record in records
+            if (record.snapshot or {}).get("generation_id") == generation_id
+        ]
+    else:
+        # Older rows predate generation IDs. The newest seven rows are the
+        # best available representation of the last generated week.
+        records = records[:7]
+
+    wardrobe_by_id = {
+        str(item.get("item_id")): item
+        for item in wardrobe_items
+        if item.get("item_id") is not None
+    }
+    schedule = []
+    for record in records:
+        snapshot = dict(record.snapshot or {})
+        item_snapshots = snapshot.get("items") or {}
+        items = {}
+        if isinstance(item_snapshots, dict):
+            for slot, item_snapshot in item_snapshots.items():
+                if not isinstance(item_snapshot, dict):
+                    continue
+                item_id = item_snapshot.get("item_id")
+                item = wardrobe_by_id.get(str(item_id))
+                if item is None:
+                    continue
+                items[str(slot)] = dict(item)
+
+        outfit = {
+            "recommendation_id": snapshot.get("recommendation_id", record.recommendation_id),
+            "structure": snapshot.get("structure"),
+            "items": items,
+            "compatibility_score": snapshot.get("compatibility_score"),
+            "style_score": snapshot.get("style_score"),
+            "base_score": snapshot.get("base_score"),
+            "ranking_method": snapshot.get("ranking_method"),
+            "personalization_weight": snapshot.get("personalization_weight"),
+            "explanation": snapshot.get("explanation"),
+        }
+        weather = snapshot.get("weather") or {}
+        schedule.append({
+            "day": snapshot.get("day"),
+            "structure": snapshot.get("structure"),
+            "status": "scheduled",
+            "quality": "restored",
+            "outfit": outfit,
+            "weather": weather,
+            "request_applied": snapshot.get("request_applied"),
+            "explanation": snapshot.get("explanation"),
+        })
+
+    schedule.sort(key=lambda day: int(day.get("day") or 0))
+    return prepare_public_response(
+        {
+            "days": len(schedule),
+            "schedule": schedule,
+            "generation_id": generation_id,
+            "restored": True,
+        },
+        request=request,
+    )
+
 # =========================================================
 # DUPLICATE DETECTION
 # =========================================================
@@ -971,6 +1050,7 @@ async def weekly_recommendation(
             wardrobe_items=owned_items,
             calendar_event=calendar_event_context,
         )
+        result["generation_id"] = uuid4().hex
 
         # =================================================
         # OUTFIT EXPLANATIONS
@@ -1030,6 +1110,23 @@ async def weekly_recommendation(
             status_code=500,
             detail="Failed to generate recommendation",
         )
+
+
+@app.get("/api/v1/recommendations/weekly/latest")
+async def latest_weekly_recommendation(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    records = await list_owned_recommendations(
+        db,
+        user_id=current_user.id,
+        source="weekly",
+        limit=50,
+    )
+    owned_records = await list_owned_wardrobe(db, current_user.id)
+    wardrobe_items = [record_to_domain_item(record) for record in owned_records]
+    return _restore_weekly_response(records, wardrobe_items, request)
 
 
 # =========================================================

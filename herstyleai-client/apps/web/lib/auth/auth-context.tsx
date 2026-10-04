@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { api, ApiError, User } from "@/lib/api";
+import { api, ApiError, clearCachedWeeklyRecommendation, User } from "@/lib/api";
 import { clearTokens } from "@/lib/auth/token-store";
 
 export type AuthStatus = "loading" | "authenticated" | "unauthenticated";
@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
         clearTokens();
+        clearCachedWeeklyRecommendation();
         setUser(null);
         setStatus("unauthenticated");
         return null;
@@ -47,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let active = true;
     const handleAuthCleared = () => {
       if (!active) return;
+      clearCachedWeeklyRecommendation();
       setUser(null);
       setStatus("unauthenticated");
     };
@@ -60,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (!active) return;
           if (error instanceof ApiError && error.status === 401) {
             clearTokens();
+            clearCachedWeeklyRecommendation();
             setUser(null);
           }
           setStatus("unauthenticated");
@@ -91,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await api.logout();
       } finally {
         clearTokens();
+        clearCachedWeeklyRecommendation();
         setUser(null);
         setStatus("unauthenticated");
       }
@@ -98,6 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async changePassword(currentPassword, newPassword) {
       await api.changePassword(currentPassword, newPassword);
       clearTokens();
+      clearCachedWeeklyRecommendation();
       setUser(null);
       setStatus("unauthenticated");
     },

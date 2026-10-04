@@ -292,8 +292,8 @@ class WeatherAwareRecommendationService:
                 recommendation_engine=(
                     self.engine
                 ),
-                cooldown_days=2,
-                repetition_penalty=0.15,
+                cooldown_days=7,
+                repetition_penalty=0.30,
                 low_score_threshold=0.30,
             )
         )

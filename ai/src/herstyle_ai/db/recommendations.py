@@ -28,6 +28,7 @@ def _build_operational_snapshot(
     weather: Mapping[str, Any] | None,
     request_applied: Any,
     day: Any,
+    generation_id: str | None = None,
 ) -> dict[str, Any]:
     snapshot = build_recommendation_snapshot(
         recommendation_id=recommendation_id,
@@ -37,6 +38,8 @@ def _build_operational_snapshot(
         request_applied=request_applied,
     )
     snapshot["day"] = day
+    if generation_id:
+        snapshot["generation_id"] = generation_id
     explanation = outfit.get("explanation")
     if isinstance(explanation, Mapping):
         snapshot["explanation"] = dict(explanation)
@@ -50,6 +53,7 @@ def _snapshots_from_result(
 ) -> dict[str, dict[str, Any]]:
     snapshots: dict[str, dict[str, Any]] = {}
     schedule = result.get("schedule", [])
+    generation_id = result.get("generation_id")
     if not isinstance(schedule, list):
         return snapshots
 
@@ -70,6 +74,7 @@ def _snapshots_from_result(
             weather=schedule_day.get("weather"),
             request_applied=schedule_day.get("request_applied"),
             day=schedule_day.get("day"),
+            generation_id=str(generation_id) if generation_id else None,
         )
     return snapshots
 
@@ -135,6 +140,29 @@ async def persist_generated_recommendations(
         ) from exc
 
     return persisted
+
+
+async def list_owned_recommendations(
+    db: AsyncSession,
+    *,
+    user_id: UUID,
+    source: str = "weekly",
+    limit: int = 50,
+) -> list[RecommendationRecord]:
+    """Return the user's newest persisted recommendations for restoration."""
+
+    safe_limit = max(1, min(int(limit), 200))
+    result = await db.scalars(
+        select(RecommendationRecord)
+        .where(
+            RecommendationRecord.user_id == user_id,
+            RecommendationRecord.source == source,
+            RecommendationRecord.deleted_at.is_(None),
+        )
+        .order_by(RecommendationRecord.created_at.desc())
+        .limit(safe_limit)
+    )
+    return list(result.all())
 
 
 async def get_owned_recommendation(

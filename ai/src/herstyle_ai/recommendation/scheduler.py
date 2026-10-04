@@ -7,8 +7,8 @@ class WeeklyOutfitScheduler:
     def __init__(
         self,
         recommendation_engine,
-        cooldown_days=2,
-        repetition_penalty=0.15,
+        cooldown_days=7,
+        repetition_penalty=0.30,
         low_score_threshold=0.30,
     ):
 
@@ -167,6 +167,15 @@ class WeeklyOutfitScheduler:
 
         return result
 
+    @staticmethod
+    def _scheduled_item_ids(scheduled):
+        result = set()
+        for day in scheduled:
+            recommendation = day.get("outfit")
+            if recommendation is not None:
+                result.update(WeeklyOutfitScheduler._get_item_ids(recommendation))
+        return result
+
     # =====================================================
     # CHOOSE ONE OUTFIT
     # =====================================================
@@ -186,6 +195,7 @@ class WeeklyOutfitScheduler:
                 scheduled
             )
         )
+        scheduled_items = self._scheduled_item_ids(scheduled)
 
         scored = []
 
@@ -205,6 +215,12 @@ class WeeklyOutfitScheduler:
                 item_ids
                 &
                 recent_items
+            )
+
+            repeated_week = (
+                item_ids
+                &
+                scheduled_items
             )
 
             repeat_count = len(
@@ -265,8 +281,9 @@ class WeeklyOutfitScheduler:
                 (
                     self.repetition_penalty
                     *
-                    repeat_count
+                    len(repeated_week)
                 )
+                - (self.repetition_penalty * 0.50 * repeat_count)
             )
 
             # Strongly discourage repeating
@@ -339,9 +356,19 @@ class WeeklyOutfitScheduler:
                         repeat_count
                     ),
 
+                "weekly_repeat_count":
+                    int(
+                        len(repeated_week)
+                    ),
+
                 "repeated_item_ids":
                     sorted(
                         repeated_recent
+                    ),
+
+                "repeated_week_item_ids":
+                    sorted(
+                        repeated_week
                     ),
 
                 "exact_outfit_used_before":

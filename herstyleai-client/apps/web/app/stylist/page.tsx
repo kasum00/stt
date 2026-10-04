@@ -26,6 +26,12 @@ export default function StylistPage() {
 
   useEffect(() => {
     api.listCalendarEvents({ limit: 50 }).then((result) => setEvents(result.items)).catch(() => undefined);
+    api.getLatestWeeklyRecommendation().then((result) => {
+      if (result.schedule.length) {
+        setWeekly(result);
+        cacheWeeklyRecommendation(result);
+      }
+    }).catch(() => undefined);
   }, []);
 
   async function generate(event?: FormEvent) {
