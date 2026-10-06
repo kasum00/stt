@@ -1,53 +1,53 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ApiError } from "@/lib/api";
+import { Brand } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth/auth-context";
 
-export default function LoginPage() {
+export default function LoginPage(){
   const router = useRouter();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function submit(event: FormEvent) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
     try {
       await login(email.trim(), password);
-      const next = new URLSearchParams(window.location.search).get("next");
-      router.replace(next?.startsWith("/") ? next : "/planner");
-    } catch (reason) {
-      setError(reason instanceof ApiError && reason.status === 401
-        ? "Email hoặc mật khẩu không đúng."
-        : reason instanceof Error ? reason.message : "Không thể đăng nhập.");
+      router.push("/home");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Đăng nhập không thành công.");
     } finally {
       setLoading(false);
     }
   }
 
-  return <div className="auth-page"><div className="auth-layout">
-    <aside className="auth-visual auth-visual-login">
-      <Image src="/auth/auth-office-style.jpg" alt="Minh hoạ phong cách HerStyle AI" fill sizes="(max-width: 900px) 100vw, 50vw" priority />
-    </aside>
-    <div className="auth-card">
-    <span className="brand-mark">H</span>
-    <h1>Chào mừng bạn trở lại</h1>
-    <p>Đăng nhập để tiếp tục hành trình phong cách của bạn.</p>
-    <form onSubmit={submit} className="auth-form">
-      <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" /></label>
-      <label>Mật khẩu<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" /></label>
-      <div className="auth-forgot"><Link href="/forgot-password">Quên mật khẩu?</Link></div>
-      {error ? <p className="error-copy">{error}</p> : null}
-      <button className="btn primary full" disabled={loading}>{loading ? "Đang đăng nhập…" : "Đăng nhập"}</button>
-    </form>
-    <p className="auth-switch">Chưa có tài khoản? <Link href="/register">Tạo tài khoản</Link></p>
-    </div>
-  </div></div>;
+  return (
+    <main className="auth-layout">
+      <section className="auth-side">
+        <img className="auth-side-image" src="/assets/auth-pastel-mint.png" alt="Bảng phối đồ thanh lịch pastel xanh mint" />
+        <Brand/>
+        <div className="auth-side-text"><h1>Chào mừng<br/>quay trở lại</h1><p>Đăng nhập để tiếp tục hành trình thời trang thông minh cùng HerStyle AI.</p></div>
+      </section>
+      <section className="auth-main">
+        <form className="auth-card" onSubmit={submit}>
+          <h2>Đăng nhập</h2>
+          <label>Email<input value={email} onChange={(event) => setEmail(event.target.value)} required type="email" placeholder="Nhập email của bạn"/></label>
+          <label>Mật khẩu<input value={password} onChange={(event) => setPassword(event.target.value)} required type="password" placeholder="Nhập mật khẩu"/></label>
+          <Link className="forgot" href="/forgot-password">Quên mật khẩu?</Link>
+          {error && <p className="form-error">{error}</p>}
+          <button className="button button-primary auth-button" type="submit" disabled={loading}>{loading ? "Đang đăng nhập…" : "Đăng nhập"}</button>
+          <div className="divider"><span>Hoặc đăng nhập với</span></div>
+          <div className="socials"><button>G</button><button>●</button><button>f</button></div>
+          <p className="switch-auth">Chưa có tài khoản? <Link href="/register">Đăng ký ngay</Link></p>
+        </form>
+      </section>
+    </main>
+  );
 }

@@ -50,6 +50,14 @@ function valuesFromResult(result: AnalysisResult): AttributeValues {
   };
 }
 
+function persistableValues(values: AttributeValues): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(values)
+      .map(([key, value]) => [key, value.trim()] as const)
+      .filter(([, value]) => value.length > 0),
+  );
+}
+
 function messageFromError(reason: unknown, fallback: string) {
   return reason instanceof Error ? reason.message : fallback;
 }
@@ -66,6 +74,17 @@ function duplicatePendingAnalysisId(reason: unknown): string | null {
   const detailRecord = detail as { code?: unknown; analysis_id?: unknown };
   if (detailRecord.code !== "duplicate_pending_analysis") return null;
   return typeof detailRecord.analysis_id === "string" ? detailRecord.analysis_id : null;
+}
+
+function duplicateWardrobeItemId(reason: unknown): string | null {
+  if (!(reason instanceof ApiError) || reason.status !== 409) return null;
+  const payload = reason.payload;
+  if (!payload || typeof payload !== "object") return null;
+  const detail = (payload as { detail?: unknown }).detail;
+  if (!detail || typeof detail !== "object") return null;
+  const detailRecord = detail as { code?: unknown; item_id?: unknown };
+  if (detailRecord.code !== "duplicate_wardrobe_item") return null;
+  return typeof detailRecord.item_id === "string" ? detailRecord.item_id : null;
 }
 
 export default function RecognitionPage() {
@@ -210,6 +229,30 @@ export default function RecognitionPage() {
           }
         }
 
+        const duplicateItemId = duplicateWardrobeItemId(reason);
+        if (duplicateItemId) {
+          try {
+            const savedItem = await api.getWardrobeItem(duplicateItemId);
+            updateItem(item.id, {
+              status: "saved",
+              result: {
+                analysis_id: duplicateItemId,
+                status: "saved",
+                preview_item: savedItem,
+              },
+              values: valuesFromResult({ analysis_id: duplicateItemId, preview_item: savedItem }),
+              error: undefined,
+            });
+            continue;
+          } catch (duplicateReason) {
+            updateItem(item.id, {
+              status: "error",
+              error: messageFromError(duplicateReason, "Không tải được món đồ đã lưu."),
+            });
+            continue;
+          }
+        }
+
         updateItem(item.id, {
           status: "error",
           error: messageFromError(reason, "Không nhận diện được ảnh này."),
@@ -237,7 +280,7 @@ export default function RecognitionPage() {
   ) {
     updateItem(itemId, { status: "saving", error: undefined });
     try {
-      await api.confirmGarment(result.analysis_id, values);
+      await api.confirmGarment(result.analysis_id, persistableValues(values));
       updateItem(itemId, { status: "saved", error: undefined });
     } catch (reason) {
       updateItem(itemId, {
@@ -254,7 +297,10 @@ export default function RecognitionPage() {
     setSaving(true);
     setError("");
     try {
-      await api.confirmGarment(activeItem.result.analysis_id, activeItem.values);
+      await api.confirmGarment(
+        activeItem.result.analysis_id,
+        persistableValues(activeItem.values),
+      );
       updateItem(activeItem.id, { status: "saved" });
     } catch (reason) {
       setError(messageFromError(reason, "Không lưu được món đồ."));

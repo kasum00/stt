@@ -1,80 +1,28 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-import { SideNav } from "@/components/SideNav";
-import { ApiError, api } from "@/lib/api";
+import { useEffect, useState } from "react";
+import AppShell from "@/components/AppShell";
+import PageHeader from "@/components/PageHeader";
 import { useAuth } from "@/lib/auth/auth-context";
+import { api, type Preferences, type Profile } from "@/lib/api";
 
-const splitValues = (value: string) => value.split(",").map((item) => item.trim()).filter(Boolean);
-
-export default function ProfilePage() {
-  const { user, changePassword } = useAuth();
-  const [displayName, setDisplayName] = useState("");
-  const [timezone, setTimezone] = useState("Asia/Ho_Chi_Minh");
-  const [locale, setLocale] = useState("vi-VN");
-  const [locationName, setLocationName] = useState("");
-  const [preferredColors, setPreferredColors] = useState("");
-  const [preferredStyles, setPreferredStyles] = useState("");
-  const [preferDress, setPreferDress] = useState(false);
-  const [passwords, setPasswords] = useState({ current: "", next: "" });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+export default function Profile() {
+  const { user, logout } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [preferences, setPreferences] = useState<Preferences | null>(null);
 
   useEffect(() => {
-    Promise.all([api.getProfile(), api.getPreferences()]).then(([profileResult, preferencesResult]) => {
-      setDisplayName(profileResult.display_name ?? "");
-      setTimezone(profileResult.timezone ?? "Asia/Ho_Chi_Minh");
-      setLocale(profileResult.locale ?? "vi-VN");
-      setLocationName(profileResult.location_name ?? "");
-      setPreferredColors(preferencesResult.preferred_colors?.join(", ") ?? "");
-      setPreferredStyles(preferencesResult.preferred_styles?.join(", ") ?? "");
-      setPreferDress(preferencesResult.prefer_dress);
-    }).catch((reason) => setError(reason instanceof Error ? reason.message : "Không thể tải hồ sơ."))
-      .finally(() => setLoading(false));
+    void Promise.all([api.getProfile(), api.getPreferences()]).then(([nextProfile, nextPreferences]) => { setProfile(nextProfile); setPreferences(nextPreferences); }).catch(() => undefined);
   }, []);
 
-  async function saveProfile(event: FormEvent) {
-    event.preventDefault();
-    setSaving(true); setMessage(""); setError("");
-    try {
-      await api.patchProfile({ display_name: displayName, timezone, locale, location_name: locationName || null });
-      await api.patchPreferences({ prefer_dress: preferDress, preferred_colors: splitValues(preferredColors), preferred_styles: splitValues(preferredStyles) });
-      setMessage("Đã lưu thay đổi.");
-    } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : "Không thể lưu hồ sơ.");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function submitPassword(event: FormEvent) {
-    event.preventDefault();
-    setMessage(""); setError("");
-    try {
-      await changePassword(passwords.current, passwords.next);
-      setMessage("Mật khẩu đã đổi. Vui lòng đăng nhập lại.");
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Không thể đổi mật khẩu.");
-    }
-  }
-
-  return <div className="content-page profile-layout">
-    <SideNav active="/profile" />
-    <section className="profile-content"><div className="page-heading"><div><h1>Thông tin cá nhân</h1><p>Quản lý thông tin và tùy chỉnh trải nghiệm HerStyle AI</p></div></div>
-      {loading ? <div className="empty-state"><h3>Đang tải hồ sơ…</h3></div> : <>
-        {error ? <p className="error-copy">{error}</p> : null}
-        {message ? <p className="success-copy">{message}</p> : null}
-        <form className="profile-card" onSubmit={saveProfile}>
-          <div className="profile-head"><div className="avatar large-avatar">{(user?.email?.slice(0, 2) ?? "H").toUpperCase()}</div><div><h2>{displayName || "Phong cách của bạn"}</h2><p>{user?.email}</p></div></div>
-          <div className="form-grid"><label><span>Tên hiển thị</span><input value={displayName} onChange={(event) => setDisplayName(event.target.value)} /></label><label><span>Múi giờ</span><input value={timezone} onChange={(event) => setTimezone(event.target.value)} /></label><label><span>Ngôn ngữ</span><input value={locale} onChange={(event) => setLocale(event.target.value)} /></label><label><span>Khu vực</span><input value={locationName} onChange={(event) => setLocationName(event.target.value)} placeholder="Hà Nội" /></label></div>
-          <label className="check-row"><input type="checkbox" checked={preferDress} onChange={(event) => setPreferDress(event.target.checked)} /><span>Ưu tiên váy trong gợi ý phối đồ</span></label>
-          <div className="form-grid"><label><span>Màu yêu thích, cách nhau bằng dấu phẩy</span><input value={preferredColors} onChange={(event) => setPreferredColors(event.target.value)} placeholder="xanh, trắng, be" /></label><label><span>Phong cách yêu thích</span><input value={preferredStyles} onChange={(event) => setPreferredStyles(event.target.value)} placeholder="thanh lịch, nữ tính" /></label></div>
-          <button className="btn primary" disabled={saving}>{saving ? "Đang lưu…" : "Lưu thay đổi"}</button>
-        </form>
-        <form className="profile-card security-card" onSubmit={submitPassword}><h2>Bảo mật</h2><p className="muted-copy">Đổi mật khẩu sẽ đăng xuất các phiên hiện tại.</p><div className="form-grid"><label><span>Mật khẩu hiện tại</span><input type="password" value={passwords.current} onChange={(event) => setPasswords((value) => ({ ...value, current: event.target.value }))} required /></label><label><span>Mật khẩu mới</span><input type="password" minLength={8} value={passwords.next} onChange={(event) => setPasswords((value) => ({ ...value, next: event.target.value }))} required /></label></div><button className="btn ghost">Đổi mật khẩu</button></form>
-      </>}
-    </section>
-  </div>;
+  const displayName = profile?.display_name || user?.email?.split("@")[0] || "Bạn";
+  return (
+    <AppShell>
+      <PageHeader title="Hồ sơ & sở thích" subtitle="Cá nhân hóa HerStyle AI theo phong cách của bạn." />
+      <div className="profile-layout">
+        <section className="profile-card"><div className="profile-avatar">{displayName.slice(0, 1).toUpperCase()}</div><h2>{displayName}</h2><p>{user?.email}</p><span>Đang hoạt động</span><button className="button button-outline full" type="button">Chỉnh sửa hồ sơ</button></section>
+        <section className="profile-settings"><h2>Phong cách của bạn</h2><div className="profile-row"><span>Phong cách ưu tiên</span><strong>{preferences?.preferred_styles?.join(" · ") || "Chưa thiết lập"}</strong></div><div className="profile-row"><span>Danh mục yêu thích</span><strong>{preferences?.preferred_categories?.join(" · ") || "Tất cả trang phục"}</strong></div><div className="profile-row"><span>Màu yêu thích</span><strong>{preferences?.preferred_colors?.join(" · ") || "Chưa thiết lập"}</strong></div><div className="profile-row"><span>Khu vực</span><strong>{profile?.location_name || "Hà Nội"}</strong></div><h2 className="account-title">Tài khoản</h2><button className="account-row" type="button">Đổi mật khẩu <b>›</b></button><button className="account-row" type="button">Thông báo <b>›</b></button><button className="account-row danger" type="button" onClick={() => void logout()}>Đăng xuất <b>›</b></button></section>
+      </div>
+    </AppShell>
+  );
 }

@@ -1,6 +1,7 @@
 import React from "react";
 
-type IconProps = { name: "home" | "wardrobe" | "sparkle" | "calendar" | "chat" | "user" | "plus" | "heart" | "bag" | "sun" | "search" | "send" | "shirt" | "clock" | "upload" | "check"; size?: number };
+type IconName = "home" | "wardrobe" | "sparkle" | "calendar" | "chat" | "user" | "plus" | "heart" | "bag" | "sun" | "search" | "send" | "shirt" | "clock" | "upload" | "check" | "settings" | "bell" | "camera" | "edit" | "refresh";
+type IconProps = { name: IconName | (string & {}); size?: number };
 
 export function Icon({ name, size = 20 }: IconProps) {
   const paths: Record<IconProps["name"], React.ReactNode> = {
@@ -20,6 +21,13 @@ export function Icon({ name, size = 20 }: IconProps) {
     clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
     upload: <><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 14v6h14v-6"/></>,
     check: <path d="m5 12 4 4L19 6"/>
+    ,settings: <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></>,
+    bell: <><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
+    camera: <><path d="M4 7h4l2-2h4l2 2h4v12H4Z"/><circle cx="12" cy="13" r="4"/></>,
+    edit: <><path d="M12 20h9"/><path d="m16.5 3.5 4 4L8 20l-5 1 1-5Z"/></>,
+    refresh: <><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M7.5 7A7 7 0 0 1 19 10M5 14a7 7 0 0 0 11.5 3"/></>
   };
-  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{paths[name]}</svg>;
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{paths[name as IconName] ?? <circle cx="12" cy="12" r="9"/>}</svg>;
 }
+
+export default Icon;

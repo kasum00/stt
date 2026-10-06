@@ -142,7 +142,7 @@ export default function PlannerPage() {
   }
 
   const days = weekly?.schedule ?? [];
-  return <div className="content-page">
+  return <div className="content-page planner-page">
     <div className="page-heading"><div><h1>Lịch phối đồ tuần này</h1><p>AI đã tạo lịch phối đồ dựa trên thời tiết và tủ đồ của bạn</p></div><button className="btn primary" type="button" onClick={() => void generate()} disabled={loading} aria-busy={loading}>{loading ? "Đang đổi bộ…" : "Đổi bộ phối"}<Icon name="sparkle" size={16} /></button></div>
     {loading ? <div className="empty-state"><h3>Đang tải lịch phối đồ…</h3></div> : error ? <div className="planner-error"><Icon name="sparkle" size={22} /><div><strong>Chưa tạo được lịch tuần</strong><p>{error}</p></div><button className="btn ghost" type="button" onClick={loadWeekly}>Thử lại</button></div> : <div className="week-grid">{days.map((day, index) => <DayCard key={day.day} day={day} active={index === 0} onOpen={() => setSelectedDay(day)} />)}</div>}
     {selectedDay ? <DayOutfitDialog day={selectedDay} onClose={() => setSelectedDay(null)} onRegenerate={() => void regenerateDay(selectedDay)} regenerating={regeneratingDay === selectedDay.day} /> : null}
